@@ -1,28 +1,44 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component, Fragment } from 'react';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
+import Dashboard from './Dashboard';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import { withStyles } from '@material-ui/core/styles';
+import NewPost from './NewPost';
+import Nav from './Nav';
+import PostPage from './PostPage';
+
+const styles = theme => ({
+  layout: {
+    width: 'auto',
+    marginLeft: theme.spacing.unit * 3,
+    marginRight: theme.spacing.unit * 3,
+    [theme.breakpoints.up(1100 + theme.spacing.unit * 3 * 2)]: {
+      width: 1100,
+      marginLeft: 'auto',
+      marginRight: 'auto',
+    },
+  }
+});
 
 class App extends Component {
+
   render() {
+    const { classes } = this.props;
+
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
+      <Router>
+        <Fragment>
+          <CssBaseline />
+          <div className={classes.layout}>
+            <Nav />
+            <Route path="/" exact component={Dashboard} />
+            <Route path="/new" exact component={NewPost} />
+            <Route path="/post" exact component={PostPage} />
+          </div>
+        </Fragment>
+      </Router>
     );
   }
 }
 
-export default App;
+export default withStyles(styles)(App);
