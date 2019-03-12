@@ -1,11 +1,14 @@
 import React, { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
+import { handleInitialData } from '../actions/shared';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
-import Dashboard from './Dashboard';
-import CssBaseline from '@material-ui/core/CssBaseline';
 import { withStyles } from '@material-ui/core/styles';
-import NewPost from './NewPost';
+import CssBaseline from '@material-ui/core/CssBaseline';
 import Nav from './Nav';
+import Dashboard from './Dashboard';
+import NewPost from './NewPost';
 import PostPage from './PostPage';
+
 
 const styles = theme => ({
   layout: {
@@ -22,6 +25,10 @@ const styles = theme => ({
 
 class App extends Component {
 
+  componentDidMount() {
+    this.props.dispatch(handleInitialData());
+  }
+
   render() {
     const { classes } = this.props;
 
@@ -31,9 +38,14 @@ class App extends Component {
           <CssBaseline />
           <div className={classes.layout}>
             <Nav />
-            <Route path="/" exact component={Dashboard} />
-            <Route path="/new" exact component={NewPost} />
-            <Route path="/post" exact component={PostPage} />
+            {this.props.loading === true
+              ? null
+              : <Fragment>
+                  <Route path="/" exact component={Dashboard} />
+                  <Route path="/new" exact component={NewPost} />
+                  <Route path="/post" exact component={PostPage} />
+                </Fragment>
+            }
           </div>
         </Fragment>
       </Router>
@@ -41,4 +53,8 @@ class App extends Component {
   }
 }
 
-export default withStyles(styles)(App);
+const mapStateToProps = ({ authedUser }) => ({
+  loading: authedUser === null
+});
+
+export default withStyles(styles)((connect(mapStateToProps)(App)));
