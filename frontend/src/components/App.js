@@ -8,7 +8,7 @@ import Nav from './Nav';
 import Dashboard from './Dashboard';
 import NewPost from './NewPost';
 import PostPage from './PostPage';
-
+import CategoryView from './CategoryView';
 
 const styles = theme => ({
   layout: {
@@ -41,10 +41,11 @@ class App extends Component {
             {this.props.loading === true
               ? null
               : <Fragment>
-                  <Route path="/" exact component={Dashboard} />
-                  <Route path="/new" exact component={NewPost} />
-                  <Route path="/post" exact component={PostPage} />
-                </Fragment>
+                <Route path="/" exact component={Dashboard} />
+                <Route path="/new/:id?" exact component={NewPost} />
+                <Route path="/posts/:id" exact component={PostPage} />
+                <Route path="/categories/:categoryPath" exact component={CategoryView} />
+              </Fragment>
             }
           </div>
         </Fragment>

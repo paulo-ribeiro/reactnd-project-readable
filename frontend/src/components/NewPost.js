@@ -1,4 +1,8 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
+import uuidv4 from 'uuid/v4';
+import { handleAddPost, handleEditPost } from '../actions/posts'
 import { withStyles } from '@material-ui/core/styles';
 import {
   Paper,
@@ -9,9 +13,9 @@ import {
   Select,
   OutlinedInput,
   MenuItem,
-  Button,
-  Typography
+  Button
 } from '@material-ui/core';
+import Header from './Header';
 
 const styles = theme => ({
   paper: {
@@ -31,76 +35,159 @@ const styles = theme => ({
   },
   sendButton: {
     marginTop: theme.spacing.unit * 3
-  },
-  formHeader: {
-    borderBottom: `1px solid #000`
   }
 });
 
 class NewPost extends Component {
+  state = {
+    title: "",
+    body: "",
+    category: ""
+  }
+
+  componentDidMount() {
+    const { post } = this.props;
+
+    if (post)
+      this.setState({
+        title: post.title,
+        body: post.body,
+        category: post.category
+      });
+  }
+
+  handleChange = (e) => {
+    this.setState({ [e.target.name]: e.target.value });
+  };
+
+  addPost = () => {
+    const { dispatch, authedUser } = this.props;
+
+    const newPost = {
+      id: uuidv4(),
+      timestamp: new Date(),
+      title: this.state.title,
+      body: this.state.body,
+      category: this.state.category,
+      author: authedUser
+    };
+
+    dispatch(handleAddPost(newPost));
+  };
+
+  editPost = () => {
+    const { dispatch, post } = this.props;
+
+    const modifiedPost = {
+      ...post,
+      title: this.state.title,
+      body: this.state.body,
+      category: this.state.category
+    };
+
+    dispatch(handleEditPost(post, modifiedPost));
+  };
+
+  handleSubmit = (e) => {
+    e.preventDefault();
+
+    const { post, history } = this.props;
+
+    if (post)
+      this.editPost();
+    else
+      this.addPost();
+
+    this.setState({
+      title: "",
+      body: "",
+      category: ""
+    });
+
+    history.push("/");
+  };
+
   render() {
-    const { classes } = this.props;
+    const { classes, categories } = this.props;
 
     return (
       <Paper className={classes.paper}>
-        <Typography className={classes.formHeader} variant="h6" gutterBottom>
-          New post
-        </Typography>
-        <Grid
-          container
-          direction="column"
-          alignItems="left"
-          justify="center">
-          <TextField
-            required
-            id="author"
-            name="author"
-            label="author"
-            fullWidth
-            margin="normal"
-            variant="outlined" />
-          <TextField
-            required
-            id="body"
-            name="body"
-            label="body"
-            fullWidth
-            margin="normal"
-            variant="outlined"
-            multiline={true}
-            rows={8} />
-          <FormControl className={classes.categoryInput} variant="outlined">
-            <InputLabel
-              htmlFor="outlined-age-simple">
-              Category
+        <Header text={"New post"} />
+        <form onSubmit={this.handleSubmit}>
+          <Grid
+            container
+            direction="column"
+            justify="center">
+            <TextField
+              value={this.state.title}
+              onChange={this.handleChange}
+              required
+              id="title"
+              name="title"
+              label="title"
+              fullWidth
+              margin="normal"
+              variant="outlined" />
+            <TextField
+              value={this.state.body}
+              onChange={this.handleChange}
+              required
+              id="body"
+              name="body"
+              label="body"
+              fullWidth
+              margin="normal"
+              variant="outlined"
+              multiline={true}
+              rows={8} />
+            <FormControl className={classes.categoryInput} variant="outlined">
+              <InputLabel
+                htmlFor="category">
+                Category
               </InputLabel>
-            <Select
-              value={10}
-              input={
-                <OutlinedInput
-                  labelWidth={64}
-                  name="category"
-                  id="outlined-age-simple"
-                />
-              }>
-              <MenuItem value="">
-                <em>None</em>
-              </MenuItem>
-              <MenuItem value={10}>Ten</MenuItem>
-              <MenuItem value={20}>Twenty</MenuItem>
-              <MenuItem value={30}>Thirty</MenuItem>
-            </Select>
-          </FormControl>
-          <Button
-            className={classes.sendButton}
-            variant="contained"
-            color="primary">
-            Send
-          </Button>
-        </Grid>
+              <Select
+                value={this.state.category}
+                onChange={this.handleChange}
+                input={
+                  <OutlinedInput
+                    labelWidth={64}
+                    name="category"
+                    id="category"
+                  />}>
+                <MenuItem value="">
+                  <em>None</em>
+                </MenuItem>
+                {categories.map(category =>
+                  <MenuItem
+                    key={category.path}
+                    value={category.path}>
+                    {category.name}
+                  </MenuItem>)}
+              </Select>
+            </FormControl>
+            <Button
+              className={classes.sendButton}
+              type="submit"
+              variant="contained"
+              color="primary">
+              Send
+            </Button>
+          </Grid>
+        </form>
       </Paper>
     );
   }
 }
 
-export default withStyles(styles)(NewPost);
+const mapStateToProps = ({ authedUser, categories, posts }, props) => {
+  const { id } = props.match.params;
+  const post = posts[id] ? posts[id] : null;
+  
+  return {
+    authedUser,
+    categories,
+    post
+  };
+};
+
+export default withStyles(styles)(withRouter(connect(mapStateToProps)(NewPost)));
