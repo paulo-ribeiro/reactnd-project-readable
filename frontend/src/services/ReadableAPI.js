@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { normalizePosts } from '../utils/normalizers';
+import { normalizePosts, normalizeComments } from '../utils/normalizers';
 
 const api = "http://localhost:8080";
 
@@ -31,20 +31,20 @@ export const getPostDetail = id =>
     .then(res => res.data);
 
 export const voteOnPost = (id, option) =>
-  axios.post(`${api}/post/${id}`, option, { headers })
+  axios.post(`${api}/posts/${id}`, option, { headers })
     .then(res => res.data);
 
-export const editPost = (id, post) =>
-  axios.put(`${api}/post/${id}`, post, { headers })
+export const editPost = (post) =>
+  axios.put(`${api}/posts/${post.id}`, post, { headers })
     .then(res => res.data);
 
 export const deletePost = id =>
-  axios.delete(`${api}/post/${id}`, { headers })
+  axios.delete(`${api}/posts/${id}`, { headers })
     .then(res => res.data);
 
 export const getPostComments = id =>
-  axios.get(`${api}/post/${id}/comments`, { headers })
-    .then(res => res.data);
+  axios.get(`${api}/posts/${id}/comments`, { headers })
+    .then(res => normalizeComments(res.data));
 
 export const newComment = comment =>
   axios.post(`${api}/comments`, comment, { headers })
@@ -58,8 +58,8 @@ export const voteOnComment = (id, option) =>
   axios.post(`${api}/comments/${id}`, option, { headers })
     .then(res => res.data);
 
-export const editComment = (id, comment) =>
-  axios.put(`${api}/comments/${id}`, comment, { headers })
+export const editComment = (comment) =>
+  axios.put(`${api}/comments/${comment.id}`, comment, { headers })
     .then(res => res.data);
 
 export const deleteComment = id =>
