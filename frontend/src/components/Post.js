@@ -50,10 +50,7 @@ class Post extends Component {
   };
 
   render() {
-    const { classes, post, isGrid, authedUser } = this.props;
-
-    if (post === null || post.deleted)
-      return <p>This post doesnt exists.</p>;
+    const { classes, post, isGrid, authedUser, numOfComments } = this.props;
 
     return (
       <Card className={classes.card}>
@@ -75,8 +72,13 @@ class Post extends Component {
               {`Category: ${post.category}`}
             </Typography>
             <Typography variant="subtitle1" color="textSecondary">
-              {`Posted by ${post.author} ${formatDate(post.timestamp)}`}
+              {`Posted by ${post.author} `
+                + `${formatDate(post.timestamp)}`}
             </Typography>
+            {!isGrid
+               && <Typography variant="subtitle1" color="textSecondary">
+                    {`${numOfComments} Comments`}
+                  </Typography>}
             <Typography variant="subtitle1" paragraph>
               {isGrid ? `${post.body.substring(0, 51)}...` : post.body}
             </Typography>
@@ -96,11 +98,16 @@ class Post extends Component {
   }
 }
 
-const mapStateToProps = ({ posts, authedUser }, { id }) => {
+const mapStateToProps = ({ posts, comments, authedUser }, { id }) => {
   const post = posts[id];
-  
+  const postComments = comments[id];
   return {
     post: post ? post : null,
+    numOfComments: postComments ?
+      Object.keys(comments[id])
+        .filter(commentId => !comments[id][commentId].deleted)
+        .length
+      : 0,
     authedUser
   };
 };

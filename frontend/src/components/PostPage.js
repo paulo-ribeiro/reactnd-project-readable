@@ -23,9 +23,12 @@ class PostPage extends Component {
   }
 
   render() {
-    const { classes, commentIds } = this.props;
+    const { classes, commentIds, postExists } = this.props;
     const { id } = this.props.match.params;
 
+    if(!postExists)
+      return <p>This post doesnt exists.</p>;
+    
     return (
       <div>
         <Post id={id} />
@@ -40,11 +43,12 @@ class PostPage extends Component {
   }
 }
 
-const mapStateToProps = ({ comments }, props) => {
+const mapStateToProps = ({ comments, posts }, props) => {
   const { id } = props.match.params;
   const postComments = comments[id];
 
   return {
+    postExists: posts[id] && !posts[id].deleted,
     commentIds: postComments ?
       Object.keys(comments[id])
         .filter(commentId => !comments[id][commentId].deleted)

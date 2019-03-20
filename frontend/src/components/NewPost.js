@@ -167,6 +167,10 @@ class NewPost extends Component {
             </FormControl>
             <Button
               className={classes.sendButton}
+              disabled={
+                !this.state.title 
+                || !this.state.body 
+                || !this.state.category}
               type="submit"
               variant="contained"
               color="primary">
@@ -182,7 +186,7 @@ class NewPost extends Component {
 const mapStateToProps = ({ authedUser, categories, posts }, props) => {
   const { id } = props.match.params;
   const post = posts[id] ? posts[id] : null;
-  
+
   return {
     authedUser,
     categories,

@@ -100,6 +100,7 @@ class NewComment extends Component {
               ? (
                 <Fragment>
                   <Button
+                    disabled={!this.state.body}
                     type="submit"
                     variant="contained"
                     color="primary">
@@ -115,10 +116,11 @@ class NewComment extends Component {
               )
               : (
                 <Button
+                  disabled={!this.state.body}
                   type="submit"
                   variant="contained"
                   color="primary">
-                  Send
+                  Comment
                 </Button>
               )
           }
