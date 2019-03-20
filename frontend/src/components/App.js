@@ -43,8 +43,8 @@ class App extends Component {
               : <Fragment>
                 <Route path="/" exact component={Dashboard} />
                 <Route path="/new/:id?" exact component={NewPost} />
-                <Route path="/posts/:id" exact component={PostPage} />
-                <Route path="/categories/:categoryPath" exact component={CategoryView} />
+                <Route path="/:category/:id" exact component={PostPage} />
+                <Route path="/:categoryPath" exact component={CategoryView} />
               </Fragment>
             }
           </div>

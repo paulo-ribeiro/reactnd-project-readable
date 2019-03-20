@@ -20,7 +20,7 @@ const Categories = ({ classes, categories }) => (
         key={category.name}
         color="inherit"
         component={RouterLink}
-        to={`/categories/${category.path}`}
+        to={`/${category.path}`}
         variant="body2">
         {category.name}
       </Link>

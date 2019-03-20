@@ -44,11 +44,13 @@ class PostPage extends Component {
 }
 
 const mapStateToProps = ({ comments, posts }, props) => {
-  const { id } = props.match.params;
+  const { id, category } = props.match.params;
   const postComments = comments[id];
 
   return {
-    postExists: posts[id] && !posts[id].deleted,
+    postExists: posts[id] 
+      && !posts[id].deleted 
+      && posts[id].category === category,
     commentIds: postComments ?
       Object.keys(comments[id])
         .filter(commentId => !comments[id][commentId].deleted)

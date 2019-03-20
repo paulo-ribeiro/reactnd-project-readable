@@ -87,7 +87,7 @@ class Post extends Component {
                 variant="subtitle1"
                 color="primary"
                 component={RouterLink}
-                to={`/posts/${post.id}`}>
+                to={`/${post.category}/${post.id}`}>
                 Continue reading...
                 </Typography>
               : null}
